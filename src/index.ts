@@ -14,10 +14,10 @@ app.post('/mcp', async (req: Request, res: Response) => {
     });
     await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
+
     res.on('close', () => {
       console.log('Request closed');
       transport.close();
-      server.close();
     });
   } catch (error) {
     console.error('Error handling MCP request:', error);
@@ -36,28 +36,26 @@ app.post('/mcp', async (req: Request, res: Response) => {
 
 // Create ticket through POST request
 app.post('/tickets', async (req: Request, res: Response) => {
-  const { customer_email, customer_name, issue_message, issue_type } = req.body;
-  const ticket = await createTicket({
-    customer_email,
-    customer_name,
-    issue_message,
-    issue_type
-  });
-  res.status(201).json({
-    message: 'Ticket created successfully',
-    data: ticket
-  });
+  try {
+    const { customer_email, customer_name, issue_message, issue_type } = req.body;
+    const ticket = await createTicket({
+      customer_email,
+      customer_name,
+      issue_message,
+      issue_type,
+    });
+    res.status(201).json({
+      message: 'Ticket created successfully',
+      data: ticket,
+    });
+  } catch (error) {
+    console.error('Error creating ticket:', error);
+    res.status(500).json({ message: 'Failed to create ticket' });
+  }
 });
-
 
 // Start the server
-const PORT = 3000;
+const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Customer Support server listening on port ${PORT}`);
-});
-
-// Handle server shutdown
-process.on('SIGINT', async () => {
-  console.log('Shutting down server...');
-  process.exit(0);
 });

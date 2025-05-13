@@ -49,7 +49,7 @@ To connect Claude to the MCP-wrapped API, add the server to the `claude_desktop_
       "command": "npx",
       "args": [
         "mcp-remote",
-        "http://localhost:3000/mcp"
+        "http://localhost:4000/mcp"
       ]
     }
   }
